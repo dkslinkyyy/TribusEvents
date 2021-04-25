@@ -2,6 +2,10 @@ package me.slinng.tribusevent.objects.storage;
 
 import me.slinng.tribusevent.Core;
 import me.slinng.tribusevent.objects.PlayableMap;
+import org.bukkit.Location;
+
+import java.util.List;
+
 
 public class MapStorage {
 
@@ -12,7 +16,6 @@ public class MapStorage {
     }
 
     public static PlayableMap fetch(String mapName) {
-
         return (PlayableMap) Core.i.getConfigManager().getMapsConfig().getCustomConfig().get("MAPS." + mapName);
     }
 

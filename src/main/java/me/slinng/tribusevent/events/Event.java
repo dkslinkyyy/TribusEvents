@@ -224,7 +224,6 @@ public abstract class Event implements Listener {
     }
 
     public void finish() {
-        System.out.println("Finished");
     }
 
     public void beginSearchForPlayers() {
