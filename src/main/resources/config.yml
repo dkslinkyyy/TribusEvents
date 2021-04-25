@@ -1,0 +1,60 @@
+config:
+  EVENTS:
+
+    LMS:
+      occasion:
+        time: "18:00"
+        weekdays:
+          - MONDAY
+          - TUESDAY
+          - WEDNESDAY
+      ITEM_FORMAT:
+        not_staff:
+          title: "&6&lLMS"
+          material: IRON_HELMET
+          slot: 11
+          lore:
+            - '&eAvsatt tid'
+            - '%kit%'
+            - '%tod%'
+            - '%weekdays%'
+            - '%price%'
+        is_staff:
+          title: "&6&lLMS"
+          material: IRON_HELMET
+          slot: 11
+          lore:
+            - '&eAvsatt tid'
+            - '%kit%'
+            - '%tod%'
+            - '%weekdays%'
+            - '%price%'
+            - '&aHögerklicka för att konfigurera'
+
+    SERVER_RESTART:
+      occasion:
+        time: "23:00"
+        weekdays:
+          - Monday
+          - Wednesday
+      ITEM_FORMAT:
+        not_staff:
+          title: "&6&lSERVER RESTART"
+          material: DIODE
+          slot: 15
+          lore:
+            - '%tod%'
+            - '%weekdays%'
+            - '%price%'
+        is_staff:
+          title: "&6&lSERVER RESTART"
+          material: DIODE
+          slot: 15
+          lore:
+            - '%tod%'
+            - '%weekdays%'
+            - '%price%'
+            - '&aHögerklicka för att konfigurera'
+
+lang:
+
