@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
 import java.io.*;
 import java.util.List;
 
@@ -21,14 +22,12 @@ public class Core extends JavaPlugin {
     public static Core i;
     private Inventory events;
 
-
     private TextUtil textUtil;
     private EventManager eManager;
     private EventController eController;
     private ConfigManager configManager;
 
     private PlayableMap playableMap;
-
 
     static {
         ConfigurationSerialization.registerClass(PlayableMap.class, "PlayableMap");
@@ -44,11 +43,7 @@ public class Core extends JavaPlugin {
         this.eManager = new EventManager();
         this.eController = new EventController();
 
-
         this.textUtil = new TextUtil();
-
-
-
 
         try {
             configManager.getConfigFile().UTF8_rewrite();
@@ -59,10 +54,10 @@ public class Core extends JavaPlugin {
         loadEvents();
     }
 
-     @Override
+    @Override
     public void onDisable() {
         //unloadEvents();
-     }
+    }
 
 
     public PlayableMap getPlayableMap() {
@@ -81,9 +76,8 @@ public class Core extends JavaPlugin {
         return eManager;
     }
 
-
     private void loadEvents() {
-       eManager.registerEvent(eController.getLMS());
+        eManager.registerEvent(eController.getLMS());
     }
 
     private void unloadEvents() {
@@ -100,7 +94,7 @@ public class Core extends JavaPlugin {
             public void run() {
                 for (Event event : eManager.getEvents()) {
 
-                    if(hasChecked) {
+                    if (hasChecked) {
                         hasChecked = false;
                         continue;
                     }
@@ -126,29 +120,20 @@ public class Core extends JavaPlugin {
         return (T) obj;
     }
 
-
-     public void openEventsGUI(Player p) {
+    public void openEventsGUI(Player p) {
         p.openInventory(events);
-     }
+    }
 
-
-
-     private void registerCommands() {
+    private void registerCommands() {
         new EventsCommand();
-     }
+    }
 
-
-
-     public TextUtil getTextUtil() {
+    public TextUtil getTextUtil() {
         return textUtil;
-     }
+    }
 
-
-     public String trans(String msg) {
+    public String trans(String msg) {
         return ChatColor.translateAlternateColorCodes('&', msg);
-     }
-
-
-
+    }
 
 }

@@ -1,4 +1,4 @@
-package me.slinng.tribusevent.Listeners;
+package me.slinng.tribusevent.listeners;
 
 import me.slinng.tribusevent.events.EventState;
 import org.bukkit.event.EventHandler;
