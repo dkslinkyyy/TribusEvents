@@ -22,7 +22,7 @@ public class SetEventLobbyLocationCommand extends SubCommand{
 
         if(args.length > 0 && args[0].equalsIgnoreCase("LMS")) {
             if(!MapStorage.exists("LMS")) {
-                p.sendMessage(Core.i.trans("&cDu måste sätta ett ställe för fallback! /events setfallback LMS"));
+                p.sendMessage(Core.i.trans("&6&lTribusMC &8» &cDu måste sätta en fallback-position. /events setfallback LMS"));
                 return;
             }
             map = MapStorage.fetch("LMS");

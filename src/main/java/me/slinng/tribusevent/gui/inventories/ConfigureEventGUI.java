@@ -21,7 +21,9 @@ public class ConfigureEventGUI extends GUI {
                 .title("&E&LAVSATT TID")
                 .lore(new String[]{
                         "",
-                        "&7Klicka för att ändra tiden"
+                        "&7Klicka för att ändra tiden för när detta",
+                        "&7event ska hållas.",
+                        "",
                 }).button(new Button() {
                     @Override
                     public void onClick(ClickType ct, int slot, GUIItem guiItem, Player whoClicked) {
@@ -35,7 +37,8 @@ public class ConfigureEventGUI extends GUI {
                     .title("&9&lKIT")
                     .lore(new String[]{
                             "",
-                            "&7Klicka för att ändra kittet för LMS"
+                            "&7Klicka för att ändra kitet för LMS",
+                            ""
                     }).button(new Button() {
                         @Override
                         public void onClick(ClickType ct, int slot, GUIItem guiItem, Player whoClicked) {
@@ -48,7 +51,8 @@ public class ConfigureEventGUI extends GUI {
                     .title("&c&lPRIS")
                     .lore(new String[]{
                             "",
-                            "&7Klicka för att lägga till ett pris"
+                            "&7Klicka för att lägga till ett pris för detta event",
+                            ""
                     }).button(new Button() {
                         @Override
                         public void onClick(ClickType ct, int slot, GUIItem guiItem, Player whoClicked) {

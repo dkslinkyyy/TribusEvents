@@ -21,17 +21,15 @@ public class EventsGUI extends GUI {
     private Player p;
 
     public EventsGUI(Player p) {
-        super("&6&lEVENTS", 9*3);
+
+        super("&6&lEVENTS", 9 * 3);
 
         this.p = p;
-
 
         filler(true);
 
         addEventItem("LMS", p);
         addEventItem("SERVER_RESTART", p);
-
-
 
     }
 
@@ -59,8 +57,6 @@ public class EventsGUI extends GUI {
 
     private void addEventItem(String event, Player p) {
 
-
-
         String isStaff = p.hasPermission("tribusevents.admin") ? "is_staff" : "not_staff";
 
         String title = Core.i.getConfigManager().getConfigFile().getCustomConfig().getString("config.EVENTS." + event + ".ITEM_FORMAT." + isStaff + ".title");
@@ -79,8 +75,8 @@ public class EventsGUI extends GUI {
                     @Override
                     public void onClick(ClickType clickType, int slot, GUIItem guiItem, Player whoClicked) {
 
-                        if(clickType == ClickType.RIGHT) {
-                            if(p.hasPermission("tribusevents.admin")) {
+                        if (clickType == ClickType.RIGHT) {
+                            if (p.hasPermission("tribusevents.admin")) {
                                 new ConfigureEventGUI(event, p).open(p);
                             }
 
@@ -94,8 +90,8 @@ public class EventsGUI extends GUI {
     private String[] convertedEventLore(String event, List<String> lore) {
         String converted[] = new String[lore.size()];
 
-        for(int i = 0; i < lore.size(); i++) {
-            for(Placeholder placeholder : getEventPlaceholders(event)) {
+        for (int i = 0; i < lore.size(); i++) {
+            for (Placeholder placeholder : getEventPlaceholders(event)) {
                 lore.set(i, lore.get(i).replaceAll(placeholder.getPlaceholder(), placeholder.getReplaced()));
                 converted[i] = lore.get(i);
             }
@@ -105,7 +101,7 @@ public class EventsGUI extends GUI {
     }
 
     private Placeholder[] getEventPlaceholders(String event) {
-        return new Placeholder[] {
+        return new Placeholder[]{
                 new Placeholder("%kit%", event.equals("LMS") ? Core.i.getEventController().getLMS().getEventName() : ""),
                 new Placeholder("%price%", event.equals("LMS") ? Core.i.getEventController().getLMS().getEventName() : ""),
                 new Placeholder("%weekdays%", Core.i.getConfigManager().getConfigFile().getCustomConfig().getStringList("config.EVENTS." + event + ".occasion.weekdays").toString()),

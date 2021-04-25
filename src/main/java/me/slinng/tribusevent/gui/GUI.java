@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -69,22 +70,16 @@ public abstract class GUI implements Listener {
         temp.clear();
     }
 
-    @org.bukkit.event.EventHandler
-    public void event(InventoryClickEvent event)
-    {
-
+    @EventHandler
+    public void event(InventoryClickEvent event) {
 
         if(event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR || event.getCurrentItem().getItemMeta() == null) {
             return;
         }
 
-
         Player p = (Player) event.getWhoClicked();
 
-
         String clickedItemName = event.getCurrentItem().getItemMeta().getDisplayName();
-
-
 
         if(event.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) {
             event.setCancelled(true);
@@ -187,6 +182,7 @@ public abstract class GUI implements Listener {
         onPlayerOpenGUI();
         p.openInventory(inventory);
     }
+
     public String getName() {
         return name;
     }
@@ -206,4 +202,5 @@ public abstract class GUI implements Listener {
     public void setSize(int size) {
         this.size = size;
     }
+
 }

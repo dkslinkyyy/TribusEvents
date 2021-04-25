@@ -29,7 +29,7 @@ public class SetFallbackLocationCommand extends SubCommand{
             }
             playableMap.setFallbackLocation(p.getLocation());
             MapStorage.save(playableMap);
-            Core.i.getTextUtil().sendTitleMessage("&eSatte fallback för LMS", 5,5,5, p);
+            Core.i.getTextUtil().sendTitleMessage("&eSatte fallback location för LMS", 5,15,5, p);
         }
 
 

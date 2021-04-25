@@ -22,14 +22,14 @@ public class AddSpawnpointCommand extends SubCommand {
 
         if(args.length > 0 && args[0].equalsIgnoreCase("LMS")) {
            if(!MapStorage.exists("LMS")) {
-               p.sendMessage(Core.i.trans("&cDu måste sätta ett ställe för spawn! /events setfallback lms"));
+               p.sendMessage(Core.i.trans("&6&lTribusMC &8» &cDu måste sätta en fallback-position /events setfallback lms"));
                return;
            }
            map = MapStorage.fetch("LMS");
            System.out.println(map.getMapName());
            map.addSpawnLocation(p.getLocation());
            MapStorage.save(map);
-           Core.i.getTextUtil().sendTitleMessage("&eDu la till pinpoint för LMS",5,5,5, p);
+           Core.i.getTextUtil().sendTitleMessage("&eDu la till spawnpoint för LMS",5,15,5, p);
         }
     }
 }
