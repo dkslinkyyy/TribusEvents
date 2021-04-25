@@ -30,12 +30,14 @@ public class Core extends JavaPlugin {
     private PlayableMap playableMap;
 
     static {
-        ConfigurationSerialization.registerClass(PlayableMap.class, "PlayableMap");
+        ConfigurationSerialization.registerClass(PlayableMap.class);
+
     }
 
     @Override
     public void onEnable() {
         i = this;
+
         configManager = new ConfigManager(this);
         configManager.loadAllConfigs();
         registerCommands();
