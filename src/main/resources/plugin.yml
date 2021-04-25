@@ -2,6 +2,8 @@ name: TribusEvent
 main: me.slinng.tribusevent.Core
 api-version: "1.13"
 version: 1.0
+softdepend:
+  - Multiverse-Core
 commands:
   events:
     description: test

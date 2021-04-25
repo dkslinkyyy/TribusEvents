@@ -136,8 +136,8 @@ public abstract class Event implements Listener {
         onJoin(player);
         eventPlayerManager.add(new EPlayer(player));
 
-
         player.teleport(playableMap.getLobbyLocation());
+
     }
 
     public boolean hasJoined(Player p) {

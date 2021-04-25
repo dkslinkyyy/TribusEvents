@@ -33,12 +33,9 @@ public abstract class CommandManager implements CommandExecutor {
         return commandsList;
     }
 
-
     public String getCommand() {
         return cmd;
     }
-
-
 
     public String getPermission() {
         return permission;
@@ -57,7 +54,9 @@ public abstract class CommandManager implements CommandExecutor {
         }
 
         if(args.length == 0) {
+
             execute(sender, args);
+
         }else{
 
             if(args[0].equalsIgnoreCase("help")) {
@@ -83,9 +82,7 @@ public abstract class CommandManager implements CommandExecutor {
                 return true;
             }
 
-
             SubCommand foundSubCommand = fetchSubCommand(args[0]);
-
 
             if(foundSubCommand == null) {
                 sender.sendMessage(Core.i.trans("&cWrong usage! /" + this.cmd + " help"));
@@ -104,19 +101,17 @@ public abstract class CommandManager implements CommandExecutor {
                 return false;
             }
 
-
             foundSubCommand.executeSub(sender, (String[]) ArrayUtils.remove(args, 0));
 
         }
+
         return false;
+
     }
-
-
 
     private SubCommand fetchSubCommand(String subCMD) {
         return subCommands.stream().filter(self -> self.getSubCommand().equalsIgnoreCase(subCMD)).findFirst().orElse(null);
     }
-
 
     private final List<SubCommand> subCommands = new ArrayList<>();
 
@@ -128,12 +123,7 @@ public abstract class CommandManager implements CommandExecutor {
         this.subCommands.add(subCommand);
     }
 
-
-
-
     protected abstract void execute(CommandSender sender, String[] args);
-
-
 
 }
 

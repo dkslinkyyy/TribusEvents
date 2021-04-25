@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class EventOccasionGUI extends GUI {
+    
     private String time;
     private final String name;
 
@@ -25,8 +26,6 @@ public class EventOccasionGUI extends GUI {
         super(name, 9);
         this.name = name;
     }
-
-
 
     private boolean hasWeekday(List<String> weekdays, String w) {
         return weekdays.contains(w);
