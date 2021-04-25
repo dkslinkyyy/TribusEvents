@@ -205,18 +205,15 @@ public abstract class Event implements Listener {
 
         setState(EventState.STARTING);
 
-        checkTimer.execute(new RunnableCode() {
-            @Override
-            public void run() {
+        checkTimer.execute(() -> {
 
-                if (checkTimer.getTime() > 0) {
-                    getPlayers().forEach(o -> {
-                        Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, getBukkitPlayer(o));
-                        getBukkitPlayer(o).playSound(o.getBukkitPlayer().getLocation(), Sound.CLICK, 1.3f, 1);
-                    });
-                }
-
+            if (checkTimer.getTime() > 0) {
+                getPlayers().forEach(o -> {
+                    Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, getBukkitPlayer(o));
+                    getBukkitPlayer(o).playSound(o.getBukkitPlayer().getLocation(), Sound.CLICK, 1.3f, 1);
+                });
             }
+
         }).whenFinished(() -> {
             getPlayers().forEach(o -> o.getBukkitPlayer().playSound(o.getBukkitPlayer().getLocation(), Sound.NOTE_PLING, 1.3f, 1));
             setState(EventState.RUNNING);
@@ -232,7 +229,7 @@ public abstract class Event implements Listener {
 
     }
 
-    public void beginSearchForPlayers() throws Exception {
+    public void beginSearchForPlayers() {
         if (!MapStorage.exists(eventName)) {
             reset();
             Core.i.getLogger().warning("Could not start " + eventName + " due to no playable maps avaialable.");
@@ -245,12 +242,7 @@ public abstract class Event implements Listener {
         setState(EventState.WAITING);
 
         CheckTimer ct = new CheckTimer(TimerType.CHECK, 20);
-        ct.execute(new RunnableCode() {
-            @Override
-            public void run() {
-                start();
-            }
-        });
+        ct.execute(this::start);
 
     }
 

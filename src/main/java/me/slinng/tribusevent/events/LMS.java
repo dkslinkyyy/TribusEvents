@@ -51,6 +51,7 @@ public class LMS extends Event {
 
 
         ItemStack splash = XMaterial.POTION.parseItem();
+        assert splash != null;
         splash.setDurability((short) 16421);
 
         for (int i = 0; i < player.getInventory().getSize(); i++) {
@@ -152,28 +153,14 @@ public class LMS extends Event {
         if (alive == 1) {
             p.spigot().respawn();
 
-            ePlayers.forEach(ePlayer -> {
-
-                ePlayer.getBukkitPlayer().teleport(playableMap.getFallbackLocation());
-
-            });
+            ePlayers.forEach(ePlayer -> ePlayer.getBukkitPlayer().teleport(playableMap.getFallbackLocation()));
 
 
             CheckTimer ct = new CheckTimer(TimerType.CHECK, 1);
 
-            ct.execute(new RunnableCode() {
-                @Override
-                public void run() {
-                    ePlayers.forEach(ePlayer -> {
-                        onFinish(ePlayer);
-
-
-                    });
-
-
-                    Core.i.getTextUtil().sendToAll("&6&lTribusMC &8» &a&l" + killer.getName() + " vann " + eventName + " eventet!");
-
-                }
+            ct.execute(() -> {
+                ePlayers.forEach(this::onFinish);
+                Core.i.getTextUtil().sendToAll("&6&lTribusMC &8» &a&l" + killer.getName() + " vann " + eventName + " eventet!");
             });
 
 
