@@ -207,12 +207,10 @@ public abstract class Event implements Listener {
 
         checkTimer.execute(() -> {
 
-            if (checkTimer.getTime() > 0) {
                 getPlayers().forEach(o -> {
                     Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, getBukkitPlayer(o));
                     getBukkitPlayer(o).playSound(o.getBukkitPlayer().getLocation(), Sound.CLICK, 1.3f, 1);
                 });
-            }
 
         }).whenFinished(() -> {
             getPlayers().forEach(o -> o.getBukkitPlayer().playSound(o.getBukkitPlayer().getLocation(), Sound.NOTE_PLING, 1.3f, 1));
@@ -226,7 +224,6 @@ public abstract class Event implements Listener {
     }
 
     public void finish() {
-
     }
 
     public void beginSearchForPlayers() {
