@@ -75,21 +75,21 @@ public class LMS extends Event {
 
 
     private void unequip(EPlayer ePlayer) {
-        ePlayer.getPlayer().getInventory().clear();
-        clear(ePlayer.getPlayer());
+        ePlayer.getBukkitPlayer().getInventory().clear();
+        clear(ePlayer.getBukkitPlayer());
 
-        ArrayList<CachedItem> playerCashedItems = cachedItems.get(ePlayer.getPlayer());
+        ArrayList<CachedItem> playerCashedItems = cachedItems.get(ePlayer.getBukkitPlayer());
 
         if (playerCashedItems == null) return;
 
         playerCashedItems.forEach(cached -> {
 
             String typeName = cached.item.getType().name();
-            if (typeName.endsWith("_HELMET")) ePlayer.getPlayer().getInventory().setHelmet(cached.item);
-            if (typeName.endsWith("_CHESTPLATE")) ePlayer.getPlayer().getInventory().setChestplate(cached.item);
-            if (typeName.endsWith("_LEGGINGS")) ePlayer.getPlayer().getInventory().setLeggings(cached.item);
-            if (typeName.endsWith("_BOOTS")) ePlayer.getPlayer().getInventory().setBoots(cached.item);
-            else ePlayer.getPlayer().getInventory().setItem(cached.slot, cached.item);
+            if (typeName.endsWith("_HELMET")) ePlayer.getBukkitPlayer().getInventory().setHelmet(cached.item);
+            if (typeName.endsWith("_CHESTPLATE")) ePlayer.getBukkitPlayer().getInventory().setChestplate(cached.item);
+            if (typeName.endsWith("_LEGGINGS")) ePlayer.getBukkitPlayer().getInventory().setLeggings(cached.item);
+            if (typeName.endsWith("_BOOTS")) ePlayer.getBukkitPlayer().getInventory().setBoots(cached.item);
+            else ePlayer.getBukkitPlayer().getInventory().setItem(cached.slot, cached.item);
         });
 
     }
@@ -135,7 +135,7 @@ public class LMS extends Event {
     @Override
     protected void onStart(List<EPlayer> ePlayers) {
         alive = ePlayers.size();
-        ePlayers.forEach(ePlayer -> equip(ePlayer.getPlayer()));
+        ePlayers.forEach(ePlayer -> equip(ePlayer.getBukkitPlayer()));
     }
 
     @Override
@@ -154,7 +154,7 @@ public class LMS extends Event {
 
             ePlayers.forEach(ePlayer -> {
 
-                ePlayer.getPlayer().teleport(playableMap.getFallbackLocation());
+                ePlayer.getBukkitPlayer().teleport(playableMap.getFallbackLocation());
 
             });
 

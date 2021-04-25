@@ -3,13 +3,12 @@ package me.slinng.tribusevent.events;
 import me.slinng.tribusevent.Core;
 import me.slinng.tribusevent.events.ePlayer.EPlayer;
 import me.slinng.tribusevent.events.ePlayer.EPlayerManager;
-import me.slinng.tribusevent.events.exceptions.CanEventStartException;
 import me.slinng.tribusevent.objects.storage.MapStorage;
 import me.slinng.tribusevent.objects.PlayableMap;
 import me.slinng.tribusevent.miscelleanous.timer.RunnableCode;
 import me.slinng.tribusevent.miscelleanous.timer.CheckTimer;
 import me.slinng.tribusevent.miscelleanous.timer.TimerType;
-import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -179,20 +178,25 @@ public abstract class Event implements Listener {
         this.check = check;
     }
 
-    public void start() throws CanEventStartException {
+    public Player getBukkitPlayer(EPlayer ep) {
+        return ep.getBukkitPlayer();
+    }
+
+    public void start() {
         if (!canStart()) {
             eventOccasion.update();
             //     Core.i.getTextUtil().sendDelayedMessage("Next " + eventName + " event is in: " + eventOccasion.getDuration(), 20*2);
             reset();
             System.out.println("Could not start " + eventName + ", event due to few players in game.");
             Core.i.getTextUtil().sendToAll("&6&lTribusMC &8» &cInga spelare anslöt till eventet, event avbrytet.");
+            return;
         }
 
         onStart(eventPlayerManager.getEventPlayers());
 
         eventPlayerManager.getEventPlayers().forEach(o -> {
             Random r = new Random();
-            o.getPlayer().teleport(playableMap.getSpawnLocations().get(r.nextInt(playableMap.getSpawnLocations().size())));
+            o.getBukkitPlayer().teleport(playableMap.getSpawnLocations().get(r.nextInt(playableMap.getSpawnLocations().size())));
         });
 
         alive = eventPlayerManager.getEventTotalPlayers();
@@ -204,11 +208,17 @@ public abstract class Event implements Listener {
         checkTimer.execute(new RunnableCode() {
             @Override
             public void run() {
+
                 if (checkTimer.getTime() > 0) {
-                    Bukkit.getOnlinePlayers().forEach(o -> Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, o));
+                    getPlayers().forEach(o -> {
+                        Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, getBukkitPlayer(o));
+                        getBukkitPlayer(o).playSound(o.getBukkitPlayer().getLocation(), Sound.CLICK, 1.3f, 1);
+                    });
                 }
+
             }
         }).whenFinished(() -> {
+            getPlayers().forEach(o -> o.getBukkitPlayer().playSound(o.getBukkitPlayer().getLocation(), Sound.NOTE_PLING, 1.3f, 1));
             setState(EventState.RUNNING);
         });
 
@@ -221,9 +231,6 @@ public abstract class Event implements Listener {
     public void finish() {
 
     }
-
-
-
 
     public void beginSearchForPlayers() throws Exception {
         if (!MapStorage.exists(eventName)) {
@@ -241,12 +248,7 @@ public abstract class Event implements Listener {
         ct.execute(new RunnableCode() {
             @Override
             public void run() {
-
-                try {
-                    start();
-                } catch (CanEventStartException e) {
-                    e.printStackTrace();
-                }
+                start();
             }
         });
 

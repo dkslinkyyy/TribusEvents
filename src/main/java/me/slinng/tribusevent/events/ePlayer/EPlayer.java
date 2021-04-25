@@ -19,7 +19,7 @@ public class EPlayer {
         isDead = dead;
     }
 
-    public Player getPlayer() {
+    public Player getBukkitPlayer() {
         return player;
     }
 

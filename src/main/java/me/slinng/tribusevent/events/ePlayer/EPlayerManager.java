@@ -33,11 +33,11 @@ public class EPlayerManager {
 
 
     public EPlayer fetchByPlayer(Player player) {
-        return eventPlayers.stream().filter(ePlayer ->  ePlayer.getPlayer() == player).findFirst().orElse(null);
+        return eventPlayers.stream().filter(ePlayer ->  ePlayer.getBukkitPlayer() == player).findFirst().orElse(null);
     }
 
     public boolean contains(Player player) {
-        EPlayer ep = eventPlayers.stream().filter(ePlayer ->  ePlayer.getPlayer() == player).findFirst().orElse(null);
+        EPlayer ep = eventPlayers.stream().filter(ePlayer ->  ePlayer.getBukkitPlayer() == player).findFirst().orElse(null);
         return ep != null;
     }
 }
