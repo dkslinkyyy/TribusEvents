@@ -5,7 +5,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class CheckTimer {
 
-    private TimerType timerType;
+    private final TimerType timerType;
 
     private int time;
 

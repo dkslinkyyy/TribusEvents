@@ -11,6 +11,7 @@ import me.slinng.tribusevent.miscelleanous.timer.TimerType;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -26,7 +27,7 @@ public abstract class Event implements Listener {
     private int minimumPlayers, maximumPlayers;
     private EventState state;
     private EventOccasion eventOccasion;
-    private final EPlayerManager eventPlayerManager;
+    protected final EPlayerManager eventPlayerManager;
     private boolean check = true;
     private int alive = 0;
 
@@ -74,8 +75,9 @@ public abstract class Event implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onDeath(PlayerDeathEvent e) {
+        e.setDeathMessage(null);
         onPlayerDeath(e, e.getEntity(), e.getEntity().getKiller(), eventPlayerManager.getEventPlayers());
     }
 
@@ -201,14 +203,13 @@ public abstract class Event implements Listener {
 
         alive = eventPlayerManager.getEventTotalPlayers();
 
-        CheckTimer checkTimer = new CheckTimer(TimerType.REPEATABLE, 11);
+        CheckTimer checkTimer = new CheckTimer(TimerType.REPEATABLE, 10);
 
         setState(EventState.STARTING);
 
         checkTimer.execute(() -> {
-
                 getPlayers().forEach(o -> {
-                    Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, getBukkitPlayer(o));
+                    if(checkTimer.getTime() > 0) Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, getBukkitPlayer(o));
                     getBukkitPlayer(o).playSound(o.getBukkitPlayer().getLocation(), Sound.CLICK, 1.3f, 1);
                 });
 
@@ -224,6 +225,8 @@ public abstract class Event implements Listener {
     }
 
     public void finish() {
+        eventPlayerManager.getEventPlayers().clear();
+        setState(EventState.UNREACHABLE);
     }
 
     public void beginSearchForPlayers() {

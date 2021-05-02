@@ -26,7 +26,6 @@ public class SetEventLobbyLocationCommand extends SubCommand{
                 return;
             }
             map = MapStorage.fetch("LMS");
-            System.out.println(map.getMapName());
             map.setLobbyLocation(p.getLocation());
             MapStorage.save(map);
             Core.i.getTextUtil().sendTitleMessage("&eDu satte lobby för LMS",5,5,5, p);

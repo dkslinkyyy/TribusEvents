@@ -4,6 +4,7 @@ package me.slinng.tribusevent;
 import me.slinng.tribusevent.commands.EventsCommand;
 import me.slinng.tribusevent.config.ConfigManager;
 import me.slinng.tribusevent.events.*;
+import me.slinng.tribusevent.listeners.PlayerQuitListener;
 import me.slinng.tribusevent.objects.PlayableMap;
 import me.slinng.tribusevent.miscelleanous.TextUtil;
 import org.bukkit.ChatColor;
@@ -52,6 +53,8 @@ public class Core extends JavaPlugin {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
+
+        getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
 
         loadEvents();
     }
