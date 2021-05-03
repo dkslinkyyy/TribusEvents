@@ -1,4 +1,4 @@
-package me.slinng.tribusevent.events;
+package me.slinng.tribusevent.event;
 
 import me.slinng.tribusevent.miscelleanous.TimeFormat;
 

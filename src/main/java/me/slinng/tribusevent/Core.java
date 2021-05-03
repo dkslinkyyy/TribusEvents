@@ -3,7 +3,7 @@ package me.slinng.tribusevent;
 
 import me.slinng.tribusevent.commands.EventsCommand;
 import me.slinng.tribusevent.config.ConfigManager;
-import me.slinng.tribusevent.events.*;
+import me.slinng.tribusevent.event.*;
 import me.slinng.tribusevent.listeners.PlayerQuitListener;
 import me.slinng.tribusevent.objects.PlayableMap;
 import me.slinng.tribusevent.miscelleanous.TextUtil;

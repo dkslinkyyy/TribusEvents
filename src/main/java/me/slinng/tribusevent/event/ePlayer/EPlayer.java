@@ -1,11 +1,9 @@
-package me.slinng.tribusevent.events.ePlayer;
+package me.slinng.tribusevent.event.ePlayer;
 
-import jdk.nashorn.internal.runtime.PropertyMap;
+import me.slinng.tribusevent.event.Event;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-
-public class EPlayer {
+public class EPlayer <T extends Event> {
 
     private final Player player;
     private boolean isDead = false;
@@ -30,12 +28,5 @@ public class EPlayer {
 
 
 
-    public void disguise() {
-
-    }
-
-    public void unDisguise() {
-
-    }
 
 }

@@ -1,37 +1,30 @@
-package me.slinng.tribusevent.events;
+package me.slinng.tribusevent.event.events.lms;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import me.slinng.tribusevent.Core;
-import me.slinng.tribusevent.events.ePlayer.EPlayer;
+import me.slinng.tribusevent.event.Event;
+import me.slinng.tribusevent.event.EventOccasion;
+import me.slinng.tribusevent.event.EventState;
+import me.slinng.tribusevent.event.ePlayer.EPlayer;
 import me.slinng.tribusevent.objects.PlayableMap;
 import me.slinng.tribusevent.miscelleanous.timer.CheckTimer;
-import me.slinng.tribusevent.miscelleanous.timer.RunnableCode;
 import me.slinng.tribusevent.miscelleanous.timer.TimerType;
-import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.Main;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboard;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class LMS extends Event {
@@ -60,7 +53,8 @@ public class LMS extends Event {
             disguisedTeam = scoreboard.getTeam("disguised");
         }
 
-        disguisedTeam.setNameTagVisibility(NameTagVisibility.HIDE_FOR_OWN_TEAM);
+        disguisedTeam.setNameTagVisibility(NameTagVisibility.NEVER);
+
 
 
     }
@@ -112,6 +106,17 @@ public class LMS extends Event {
         });
     }
 
+    private static class CachedItem {
+
+        private final ItemStack item;
+        private final int slot;
+
+        CachedItem(ItemStack paramItem, int paramSlot) {
+            this.item = paramItem;
+            this.slot = paramSlot;
+        }
+
+    }
 
     private void equip(Player player) {
         player.setHealth(20.0);
@@ -139,16 +144,29 @@ public class LMS extends Event {
     }
 
 
-    private static class CachedItem {
 
-        private final ItemStack item;
-        private final int slot;
 
-        CachedItem(ItemStack paramItem, int paramSlot) {
-            this.item = paramItem;
-            this.slot = paramSlot;
+    private boolean isInventoryFull(Player p)
+    {
+        return p.getInventory().firstEmpty() == -1;
+    }
+
+
+
+    private void fillPots(Player p) {
+        if(isInventoryFull(p)) return;
+
+        PlayerInventory playerINV = p.getInventory();
+
+
+        ItemStack splash = XMaterial.POTION.parseItem();
+        assert splash != null;
+        splash.setDurability((short) 16421);
+
+        for (int i = 0; i < p.getInventory().getSize(); i++) {
+            playerINV.setItem(i, splash);
         }
-
+        playerINV.setItem(0, XMaterial.IRON_SWORD.parseItem());
     }
 
 
@@ -209,19 +227,29 @@ public class LMS extends Event {
     public void onJoin(Player p)
     {
         clear(p);
-        disguise(p);
     }
 
 
     @Override
     protected void onStart(List<EPlayer> ePlayers) {
         alive = ePlayers.size();
-        ePlayers.forEach(ePlayer -> equip(ePlayer.getBukkitPlayer()));
+        ePlayers.forEach(ePlayer -> {
+            equip(ePlayer.getBukkitPlayer());
+            disguise(ePlayer.getBukkitPlayer());
+            refresh(ePlayer.getBukkitPlayer());
+
+        });
+
+
     }
+
+
 
     @Override
     public void onFinish(EPlayer ep) {
         unequip(ep);
+        unDisguise(ep.getBukkitPlayer());
+        refresh(ep.getBukkitPlayer());
     }
 
     @Override
@@ -276,39 +304,7 @@ public class LMS extends Event {
 
 
 
-    public void changeNameTag(Player p) {
-        try {
-            EntityPlayer entityPlayer = ((CraftPlayer) p).getHandle();
-            entityPlayer.displayName = "Test";
-
-            eventPlayerManager.getEventPlayers().forEach(ep -> {
-                if(ep.getBukkitPlayer() != p) {
-                    ((CraftPlayer)ep.getBukkitPlayer()).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedEntitySpawn(((CraftPlayer)p).getHandle()));
-
-                }
-            });
-
-        }catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
 
-
-
-    public void hideNametag(Player player) {
-        ArmorStand stand = (ArmorStand) player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
-        stand.setVisible(false);
-        stand.setMetadata("HideNametag", new FixedMetadataValue(Core.i, true)); //Optional
-        player.setPassenger(stand);
-    }
-
-    public void resetNametag(Player player) {
-        Entity entity = player.getPassenger();
-        if (entity.hasMetadata("HideNametag")) {
-            entity.remove();
-        }
-        //entity#remove();
-    }
 
 }

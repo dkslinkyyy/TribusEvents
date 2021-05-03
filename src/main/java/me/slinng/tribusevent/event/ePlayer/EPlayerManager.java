@@ -1,4 +1,4 @@
-package me.slinng.tribusevent.events.ePlayer;
+package me.slinng.tribusevent.event.ePlayer;
 
 import org.bukkit.entity.Player;
 

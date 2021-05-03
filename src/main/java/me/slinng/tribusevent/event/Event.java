@@ -1,11 +1,10 @@
-package me.slinng.tribusevent.events;
+package me.slinng.tribusevent.event;
 
 import me.slinng.tribusevent.Core;
-import me.slinng.tribusevent.events.ePlayer.EPlayer;
-import me.slinng.tribusevent.events.ePlayer.EPlayerManager;
+import me.slinng.tribusevent.event.ePlayer.EPlayer;
+import me.slinng.tribusevent.event.ePlayer.EPlayerManager;
 import me.slinng.tribusevent.objects.storage.MapStorage;
 import me.slinng.tribusevent.objects.PlayableMap;
-import me.slinng.tribusevent.miscelleanous.timer.RunnableCode;
 import me.slinng.tribusevent.miscelleanous.timer.CheckTimer;
 import me.slinng.tribusevent.miscelleanous.timer.TimerType;
 import org.bukkit.Sound;
