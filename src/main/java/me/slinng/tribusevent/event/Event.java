@@ -1,5 +1,11 @@
 package me.slinng.tribusevent.event;
 
+import com.google.common.base.Optional;
+import me.jasperjh.animatedscoreboard.AnimatedScoreboard;
+import me.jasperjh.animatedscoreboard.config.PlayerScoreboardFile;
+import me.jasperjh.animatedscoreboard.objects.PlayerScoreboard;
+import me.jasperjh.animatedscoreboard.objects.PlayerScoreboardTemplate;
+import me.jasperjh.animatedscoreboard.objects.ScoreboardPlayer;
 import me.slinng.tribusevent.Core;
 import me.slinng.tribusevent.event.ePlayer.EPlayer;
 import me.slinng.tribusevent.event.ePlayer.EPlayerManager;
@@ -7,6 +13,7 @@ import me.slinng.tribusevent.objects.storage.MapStorage;
 import me.slinng.tribusevent.objects.PlayableMap;
 import me.slinng.tribusevent.miscelleanous.timer.CheckTimer;
 import me.slinng.tribusevent.miscelleanous.timer.TimerType;
+import me.slinng.tribusevent.placeholders.TribusEventPlaceholder;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,30 +52,35 @@ public abstract class Event implements Listener {
 
         this.eventPlayerManager = new EPlayerManager();
 
+
         Core.i.getServer().getPluginManager().registerEvents(this, Core.i);
     }
 
 
     protected abstract void onJoin(Player p);
-    protected abstract void onStart(List<EPlayer> ePlayers);
-    protected abstract void onFinish(EPlayer ep);
 
-    protected abstract void onPlayerDeath(PlayerDeathEvent e, Player p, Player killer, List<EPlayer> EPlayers);
+    protected abstract void onStart(List<EPlayer> ePlayers);
+
+    protected abstract void onFinish(List<EPlayer> ePlayers);
+
+    protected abstract void onPlayerDeath(PlayerDeathEvent e, Player p, Player killer, List<EPlayer> ePlayers);
+
     protected abstract void onPlayerDamageEvent(EntityDamageEvent e, Player p);
+
     protected abstract void onPlayerDamagePlayer(EntityDamageByEntityEvent e, Player p);
 
 
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
-        if(!(e.getEntity() instanceof Player)) return;
+        if (!(e.getEntity() instanceof Player)) return;
 
-        onPlayerDamagePlayer(e, (Player) e.getEntity());    }
-
+        onPlayerDamagePlayer(e, (Player) e.getEntity());
+    }
 
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
-        if(!(e.getEntity() instanceof Player)) return;
+        if (!(e.getEntity() instanceof Player)) return;
 
         onPlayerDamageEvent(e, (Player) e.getEntity());
 
@@ -116,7 +128,7 @@ public abstract class Event implements Listener {
     }
 
     public boolean isState(EventState state) {
-        return this.state == state;
+        return this.state != state;
     }
 
     public EventState getState() {
@@ -127,13 +139,26 @@ public abstract class Event implements Listener {
     //Players
 
     public void join(Player player) {
-        if (!isState(EventState.WAITING)) return;
-        if(hasJoined(player)) return;
+        if (isState(EventState.WAITING)) return;
+        if (hasJoined(player)) return;
         if (isFull()) return;
 
-        Core.i.getTextUtil().sendToAll("&6&lTribusMC &8» &a" + player.getName() +" &7gick med i LMS eventet.");
+        Core.i.getTextUtil().sendToAll("&6&lTribusMC &8» &a" + player.getName() + " &7gick med i LMS eventet.");
 
 
+            player.sendMessage(Core.i.getAnimatedScoreboardAPI() + "");
+
+        /*
+        Optional<PlayerScoreboard> playerScoreboard = Core.i.getAnimatedScoreboardAPI().getPlayerScoreboard(player.getUniqueId());
+
+        if (!playerScoreboard.isPresent())
+            return;
+        PlayerScoreboard sp = playerScoreboard.get();
+
+        sp.getScoreboardPlayer().switchScoreboard(new PlayerScoreboardTemplate(new PlayerScoreboardFile(AnimatedScoreboard.getInstance(), "eventsboard"), ""));
+
+
+         */
         onJoin(player);
         eventPlayerManager.add(new EPlayer(player));
 
@@ -202,15 +227,18 @@ public abstract class Event implements Listener {
 
         alive = eventPlayerManager.getEventTotalPlayers();
 
+        new TribusEventPlaceholder(Core.i, this).register();
+
         CheckTimer checkTimer = new CheckTimer(TimerType.REPEATABLE, 10);
 
         setState(EventState.STARTING);
 
         checkTimer.execute(() -> {
-                getPlayers().forEach(o -> {
-                    if(checkTimer.getTime() > 0) Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, getBukkitPlayer(o));
-                    getBukkitPlayer(o).playSound(o.getBukkitPlayer().getLocation(), Sound.CLICK, 1.3f, 1);
-                });
+            getPlayers().forEach(o -> {
+                if (checkTimer.getTime() > 0)
+                    Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, getBukkitPlayer(o));
+                getBukkitPlayer(o).playSound(o.getBukkitPlayer().getLocation(), Sound.CLICK, 1.3f, 1);
+            });
 
         }).whenFinished(() -> {
             getPlayers().forEach(o -> o.getBukkitPlayer().playSound(o.getBukkitPlayer().getLocation(), Sound.NOTE_PLING, 1.3f, 1));
@@ -224,6 +252,7 @@ public abstract class Event implements Listener {
     }
 
     public void finish() {
+        onFinish(eventPlayerManager.getEventPlayers());
         eventPlayerManager.getEventPlayers().clear();
         setState(EventState.UNREACHABLE);
     }

@@ -3,7 +3,7 @@ package me.slinng.tribusevent.event.ePlayer;
 import me.slinng.tribusevent.event.Event;
 import org.bukkit.entity.Player;
 
-public class EPlayer <T extends Event> {
+public class EPlayer{
 
     private final Player player;
     private boolean isDead = false;
@@ -25,6 +25,8 @@ public class EPlayer <T extends Event> {
     public Player getBukkitPlayer() {
         return player;
     }
+
+
 
 
 

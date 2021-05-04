@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EPlayerManager {
+public class EPlayerManager{
 
     private final List<EPlayer> eventPlayers;
 
@@ -33,11 +33,14 @@ public class EPlayerManager {
 
 
     public EPlayer fetchByPlayer(Player player) {
-        return eventPlayers.stream().filter(ePlayer ->  ePlayer.getBukkitPlayer() == player).findFirst().orElse(null);
+        return eventPlayers.stream().filter(ePlayer ->  (EPlayer) ePlayer.getBukkitPlayer() == player).findFirst().orElse(null);
     }
 
     public boolean contains(Player player) {
         EPlayer ep = eventPlayers.stream().filter(ePlayer ->  ePlayer.getBukkitPlayer() == player).findFirst().orElse(null);
         return ep != null;
     }
+
+
+
 }
