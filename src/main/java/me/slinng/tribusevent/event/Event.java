@@ -1,9 +1,10 @@
 package me.slinng.tribusevent.event;
 
+import com.cryptomorin.xseries.XPotion;
 import com.google.common.base.Optional;
 import me.jasperjh.animatedscoreboard.AnimatedScoreboard;
+import me.jasperjh.animatedscoreboard.AnimatedScoreboardAPI;
 import me.jasperjh.animatedscoreboard.config.PlayerScoreboardFile;
-import me.jasperjh.animatedscoreboard.objects.PlayerScoreboard;
 import me.jasperjh.animatedscoreboard.objects.PlayerScoreboardTemplate;
 import me.jasperjh.animatedscoreboard.objects.ScoreboardPlayer;
 import me.slinng.tribusevent.Core;
@@ -13,7 +14,7 @@ import me.slinng.tribusevent.objects.storage.MapStorage;
 import me.slinng.tribusevent.objects.PlayableMap;
 import me.slinng.tribusevent.miscelleanous.timer.CheckTimer;
 import me.slinng.tribusevent.miscelleanous.timer.TimerType;
-import me.slinng.tribusevent.placeholders.TribusEventPlaceholder;
+import me.slinng.tribusevent.placeholders.PlaceholderImpl;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +25,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class Event implements Listener {
 
@@ -36,6 +38,8 @@ public abstract class Event implements Listener {
     protected final EPlayerManager eventPlayerManager;
     private boolean check = true;
     private int alive = 0;
+    private CheckTimer timerOnStart, timerOnSearch;
+
 
     protected PlayableMap playableMap;
 
@@ -51,6 +55,79 @@ public abstract class Event implements Listener {
 
 
         this.eventPlayerManager = new EPlayerManager();
+
+        this.timerOnStart = new CheckTimer(TimerType.REPEATABLE, 5);
+        this.timerOnSearch = new CheckTimer(TimerType.CHECK, 20);
+
+        try {
+            Core.i.registerPlaceholderOwner(this);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
+        Core.i.getPlaceholderCollector().addPlaceholder(eventName, new PlaceholderImpl[]{
+                new PlaceholderImpl() {
+                    @Override
+                    public String getPlaceholder() {
+                        return "name";
+                    }
+
+                    @Override
+                    public String getResult(Player p) {
+                        return eventName;
+                    }
+                },
+                new PlaceholderImpl() {
+                    @Override
+                    public String getPlaceholder() {
+                        return "total";
+                    }
+
+                    @Override
+                    public String getResult(Player p) {
+                        return String.valueOf(getMaximumPlayers());
+                    }
+                },
+                new PlaceholderImpl() {
+                    @Override
+                    public String getPlaceholder() {
+                        return "totalingame";
+                    }
+
+                    @Override
+                    public String getResult(Player p) {
+                        return String.valueOf(getPlayersInEvent());
+                    }
+                },
+                new PlaceholderImpl() {
+                    @Override
+                    public String getPlaceholder() {
+                        return "status";
+                    }
+
+                    @Override
+                    public String getResult(Player p) {
+                        return String.valueOf(state.getText());
+                    }
+                },
+                new PlaceholderImpl() {
+                    @Override
+                    public String getPlaceholder() {
+                        return "timeuntilstart";
+                    }
+
+                    @Override
+                    public String getResult(Player p) {
+                        return timerOnSearch.getTime() + "s";
+                    }
+                }
+            }
+        );
+
+
+        Core.i.getPlaceholderCollector().addPlaceholder(eventName, getPlaceholders());
+
+
 
 
         Core.i.getServer().getPluginManager().registerEvents(this, Core.i);
@@ -69,6 +146,7 @@ public abstract class Event implements Listener {
 
     protected abstract void onPlayerDamagePlayer(EntityDamageByEntityEvent e, Player p);
 
+    protected abstract PlaceholderImpl[] getPlaceholders();
 
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
@@ -146,19 +224,8 @@ public abstract class Event implements Listener {
         Core.i.getTextUtil().sendToAll("&6&lTribusMC &8» &a" + player.getName() + " &7gick med i LMS eventet.");
 
 
-            player.sendMessage(Core.i.getAnimatedScoreboardAPI() + "");
+        Core.i.switchScoreboard(player, "EVENT_board");
 
-        /*
-        Optional<PlayerScoreboard> playerScoreboard = Core.i.getAnimatedScoreboardAPI().getPlayerScoreboard(player.getUniqueId());
-
-        if (!playerScoreboard.isPresent())
-            return;
-        PlayerScoreboard sp = playerScoreboard.get();
-
-        sp.getScoreboardPlayer().switchScoreboard(new PlayerScoreboardTemplate(new PlayerScoreboardFile(AnimatedScoreboard.getInstance(), "eventsboard"), ""));
-
-
-         */
         onJoin(player);
         eventPlayerManager.add(new EPlayer(player));
 
@@ -218,33 +285,50 @@ public abstract class Event implements Listener {
             return;
         }
 
+
         onStart(eventPlayerManager.getEventPlayers());
 
         eventPlayerManager.getEventPlayers().forEach(o -> {
+            Core.i.switchScoreboard(o.getBukkitPlayer(), eventName.toUpperCase() + "_board");
+
+
+            XPotion speed = XPotion.SPEED;
+
+            o.getBukkitPlayer().addPotionEffect(speed.parsePotion(35000, 1));
+
             Random r = new Random();
             o.getBukkitPlayer().teleport(playableMap.getSpawnLocations().get(r.nextInt(playableMap.getSpawnLocations().size())));
         });
 
         alive = eventPlayerManager.getEventTotalPlayers();
 
-        new TribusEventPlaceholder(Core.i, this).register();
-
-        CheckTimer checkTimer = new CheckTimer(TimerType.REPEATABLE, 10);
 
         setState(EventState.STARTING);
 
-        checkTimer.execute(() -> {
+        timerOnStart.execute(() -> {
             getPlayers().forEach(o -> {
-                if (checkTimer.getTime() > 0)
-                    Core.i.getTextUtil().sendTitleMessage("&e&l" + checkTimer.getTime(), 5, 5, 5, getBukkitPlayer(o));
-                getBukkitPlayer(o).playSound(o.getBukkitPlayer().getLocation(), Sound.CLICK, 1.3f, 1);
+                if (timerOnStart.getTime() > 0)
+                    Core.i.getTextUtil().sendTitleMessage(countdownColorCodes()[timerOnStart.getTime() == 0 ? timerOnStart.getTime() : timerOnStart.getTime()-1] + timerOnStart.getTime(), 5, 5, 5, getBukkitPlayer(o));
+                getBukkitPlayer(o).playSound(o.getBukkitPlayer().getLocation(), Sound.CLICK, 1.3f, 1f);
             });
 
         }).whenFinished(() -> {
-            getPlayers().forEach(o -> o.getBukkitPlayer().playSound(o.getBukkitPlayer().getLocation(), Sound.NOTE_PLING, 1.3f, 1));
+            getPlayers().forEach(o -> o.getBukkitPlayer().playSound(o.getBukkitPlayer().getLocation(), Sound.NOTE_PLING, 1.3f, 1f));
             setState(EventState.RUNNING);
         });
 
+    }
+
+
+
+    private String[] countdownColorCodes() {
+        return new String[] {
+                "&4",
+                "&c",
+                "&e",
+                "&a",
+                "&2"
+        };
     }
 
     private void reset() {
@@ -253,6 +337,7 @@ public abstract class Event implements Listener {
 
     public void finish() {
         onFinish(eventPlayerManager.getEventPlayers());
+        eventPlayerManager.getEventPlayers().forEach(e -> Core.i.switchScoreboard(e.getBukkitPlayer(), "defaultscoreboard"));
         eventPlayerManager.getEventPlayers().clear();
         setState(EventState.UNREACHABLE);
     }
@@ -261,7 +346,11 @@ public abstract class Event implements Listener {
         if (!MapStorage.exists(eventName)) {
             reset();
             Core.i.getLogger().warning("Could not start " + eventName + " due to no playable maps avaialable.");
+            return;
         }
+
+
+        Core.i.setCurrentEvent(this);
 
         playableMap = MapStorage.fetch(eventName);
 
@@ -269,8 +358,7 @@ public abstract class Event implements Listener {
 
         setState(EventState.WAITING);
 
-        CheckTimer ct = new CheckTimer(TimerType.CHECK, 20);
-        ct.execute(this::start);
+        timerOnSearch.execute(this::start);
 
     }
 

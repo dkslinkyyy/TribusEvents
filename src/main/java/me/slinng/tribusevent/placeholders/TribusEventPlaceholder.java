@@ -8,11 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class TribusEventPlaceholder extends PlaceholderExpansion {
     private final Core plugin;
-    private final Event event;
 
-    public TribusEventPlaceholder(Core plugin, Event event){
+    public TribusEventPlaceholder(Core plugin){
         this.plugin = plugin;
-        this.event = event;
     }
 
     /**
@@ -95,17 +93,14 @@ public class TribusEventPlaceholder extends PlaceholderExpansion {
             return "";
         }
 
-        if(identifier.equals("name")){
-            return event.getEventName();
-        }
+        PlaceholderImpl placeholderImpl;
 
+        placeholderImpl =  Core.i.getPlaceholderCollector().fetchMatching(identifier);
 
-        if(identifier.equals("alive")){
-            return String.valueOf(event.getPlayersInEvent());
-        }
+        if(placeholderImpl == null) return null;
+        return placeholderImpl.getResult(player);
 
-
-        return null;
     }
+
 
 }

@@ -2,6 +2,8 @@ name: TribusEvent
 main: me.slinng.tribusevent.Core
 softdepend:
   - Multiverse-Core
+  - PlaceholderAPI
+  - AnimatedScoreboard
 api-version: "1.13"
 version: 1.0
 commands:

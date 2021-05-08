@@ -1,18 +1,22 @@
 package me.slinng.tribusevent;
 
 
+import com.google.common.base.Optional;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.PlaceholderHook;
 import me.jasperjh.animatedscoreboard.AnimatedScoreboard;
 import me.jasperjh.animatedscoreboard.AnimatedScoreboardAPI;
 import me.jasperjh.animatedscoreboard.config.PlayerScoreboardFile;
 import me.jasperjh.animatedscoreboard.objects.PlayerScoreboardTemplate;
+import me.jasperjh.animatedscoreboard.objects.ScoreboardPlayer;
 import me.slinng.tribusevent.commands.EventsCommand;
 import me.slinng.tribusevent.config.ConfigManager;
 import me.slinng.tribusevent.event.*;
 import me.slinng.tribusevent.listeners.PlayerQuitListener;
 import me.slinng.tribusevent.objects.PlayableMap;
 import me.slinng.tribusevent.miscelleanous.TextUtil;
+import me.slinng.tribusevent.placeholders.PlaceholderCollector;
+import me.slinng.tribusevent.placeholders.PlaceholderImpl;
 import me.slinng.tribusevent.placeholders.TribusEventPlaceholder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,6 +44,7 @@ public class Core extends JavaPlugin {
     private EventController eController;
     private ConfigManager configManager;
     private AnimatedScoreboardAPI animatedScoreboardAPI;
+    private PlaceholderCollector placeholderCollector;
 
     private PlayableMap playableMap;
 
@@ -52,34 +57,51 @@ public class Core extends JavaPlugin {
     public void onEnable() {
         i = this;
 
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new TribusEventPlaceholder(this).register();
+
+        }else{
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-
-        configManager = new ConfigManager(this);
-        configManager.loadAllConfigs();
-        registerCommands();
-
         this.animatedScoreboardAPI = AnimatedScoreboard.loadAPI(this);
-
-        this.eManager = new EventManager();
-        this.eController = new EventController();
 
         this.textUtil = new TextUtil();
 
+        configManager = new ConfigManager(this);
+        configManager.loadAllConfigs();
         try {
             configManager.getConfigFile().UTF8_rewrite();
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
 
+
+        registerCommands();
+
+        this.placeholderCollector = new PlaceholderCollector();
+
+
+        this.eManager = new EventManager();
+        this.eController = new EventController();
+
+        loadEvents();
+
+
+
+
+
+
+
+
+
+
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
 
 
 
-        loadEvents();
+
     }
 
     @Override
@@ -145,9 +167,41 @@ public class Core extends JavaPlugin {
 
     }
 
-    private void registerPlaceholders() {
-
+    public void registerPlaceholderOwner(Event paramEvent) throws Exception {
+        placeholderCollector.register(paramEvent.getEventName());
     }
+    public void unRegisterPlaceholderOwner(Event paramEvent) throws Exception {
+        placeholderCollector.register(paramEvent.getEventName());
+    }
+
+
+    public PlaceholderCollector getPlaceholderCollector() {
+        return placeholderCollector;
+    }
+
+    private Event currentEvent;
+
+    public Event getCurrentPlayedEvent() {
+        return currentEvent;
+    }
+
+    public void setCurrentEvent(Event event) {
+        this.currentEvent = event;
+    }
+
+    public void switchScoreboard(Player p, String scoreboard) {
+        Optional<ScoreboardPlayer> scoreboardPlayer = animatedScoreboardAPI.getScoreboardPlayer(p.getUniqueId());
+
+        if(!scoreboardPlayer.isPresent())
+            return;
+
+        ScoreboardPlayer sp = scoreboardPlayer.get();
+
+        sp.switchScoreboard(new PlayerScoreboardTemplate(new PlayerScoreboardFile(AnimatedScoreboard.getInstance(), scoreboard), ""));
+    }
+
+
+
 
 
     @SuppressWarnings("unchecked")

@@ -3,10 +3,12 @@ G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\commands\sub\J
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\commands\sub\ConfigureEventCommand.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\gui\GUIItem.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\objects\storage\MapStorage.java
+G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\placeholders\TribusEventPlaceholder.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\objects\Reward.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\Core.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\config\ConfigManager.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\commands\sub\SubCommand.java
+G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\placeholders\PlaceholderImpl.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\objects\PlayableMap.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\gui\GUI.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\gui\inventories\EventsGUI.java
@@ -15,12 +17,11 @@ G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\config\ConfigL
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\gui\GUIManager.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\gui\inventories\EventOccasionGUI.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\event\EventManager.java
-G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\scoreboard\boards\LobbyScoreboard.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\event\EventOccasion.java
-G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\scoreboard\boards\WaitingLobbyScoreboard.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\event\events\lms\LMS.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\commands\EventsCommand.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\commands\sub\SetEventRewardCommand.java
+G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\placeholders\PlaceholderCollector.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\miscelleanous\ItemCreator.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\gui\Button.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\event\ePlayer\EPlayerManager.java
@@ -36,7 +37,6 @@ G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\event\EventSta
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\config\configs\RewardsConfig.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\event\EventController.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\config\configs\MapsConfig.java
-G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\scoreboard\boards\InGameScoreboard.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\miscelleanous\timer\RunnableCode.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\event\ePlayer\EPlayer.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\config\configs\DefaultConfig.java
@@ -46,6 +46,4 @@ G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\miscelleanous\
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\commands\CommandManager.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\commands\sub\EventForceStartCommand.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\event\ePlayer\EPlayerState.java
-G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\scoreboard\ScoreboardFactory.java
 G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\event\Event.java
-G:\Dev\Minecraft\TribusEvents\src\main\java\me\slinng\tribusevent\scoreboard\ScoreboardManager.java

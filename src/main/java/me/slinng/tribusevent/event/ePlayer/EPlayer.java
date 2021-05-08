@@ -7,7 +7,7 @@ public class EPlayer{
 
     private final Player player;
     private boolean isDead = false;
-
+    private EPlayerState state;
 
 
     public EPlayer(Player player) {
@@ -27,8 +27,9 @@ public class EPlayer{
     }
 
 
-
-
-
-
+    public void setState(EPlayerState ePlayerState) {
+        this.state = ePlayerState;
+    }
+    
+    
 }

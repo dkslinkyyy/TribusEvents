@@ -11,6 +11,7 @@ import me.slinng.tribusevent.event.ePlayer.EPlayer;
 import me.slinng.tribusevent.objects.PlayableMap;
 import me.slinng.tribusevent.miscelleanous.timer.CheckTimer;
 import me.slinng.tribusevent.miscelleanous.timer.TimerType;
+import me.slinng.tribusevent.placeholders.PlaceholderImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -33,6 +34,7 @@ public class LMS extends Event {
     private PlayableMap map;
     private final HashMap<Player, ArrayList<CachedItem>> cachedItems;
     private final HashMap<Player, Property> cachedProperties;
+    private final HashMap<Player, Integer> kills;
     private Scoreboard scoreboard;
     private Team disguisedTeam;
     private int alive = 0;
@@ -45,6 +47,7 @@ public class LMS extends Event {
 
         cachedItems = new HashMap<>();
         cachedProperties = new HashMap<>();
+        kills = new HashMap<>();
 
         scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 
@@ -142,7 +145,7 @@ public class LMS extends Event {
         assert splash != null;
         splash.setDurability((short) 16421);
 
-        for (int i = 0; i < player.getInventory().getSize(); i++) {
+        for (int i = 0; i < 10; i++) {
             playerINV.setItem(i, splash);
         }
         playerINV.setItem(0, XMaterial.IRON_SWORD.parseItem());
@@ -227,6 +230,8 @@ public class LMS extends Event {
     public void onJoin(Player p) {
         cacheItems(p);
         unEquip(p);
+        kills.put(p, 0);
+
 
     }
 
@@ -238,7 +243,6 @@ public class LMS extends Event {
             equip(ePlayer.getBukkitPlayer());
             disguise(ePlayer.getBukkitPlayer());
             refresh(ePlayer.getBukkitPlayer());
-
         });
 
 
@@ -260,6 +264,9 @@ public class LMS extends Event {
         if (!hasJoined(p)) {
             return;
         }
+
+        kills.put(killer, kills.get(killer) +1);
+
         alive -= 1;
 
         e.getDrops().clear();
@@ -267,15 +274,24 @@ public class LMS extends Event {
         if (alive == 1) {
             p.spigot().respawn();
 
-            ePlayers.forEach(ePlayer -> ePlayer.getBukkitPlayer().teleport(playableMap.getFallbackLocation()));
+            ePlayers.forEach(ePlayer -> {
+                ePlayer.getBukkitPlayer().teleport(playableMap.getFallbackLocation());
+                ePlayer.getBukkitPlayer().getActivePotionEffects().forEach(potionEffect -> {
+                    ePlayer.getBukkitPlayer().removePotionEffect(potionEffect.getType());
+                });
+            });
+
 
             CheckTimer ct = new CheckTimer(TimerType.CHECK, 1);
+
 
             ct.execute(() -> {
                 Core.i.getTextUtil().sendToAll("&6&lTribusMC &8» &a&l" + killer.getName() + " vann " + eventName + " eventet!");
             });
 
             super.finish();
+            cachedProperties.clear();
+
 
         } else {
             p.setHealth(20.0);
@@ -283,8 +299,6 @@ public class LMS extends Event {
             p.setGameMode(GameMode.ADVENTURE);
             p.setAllowFlight(true);
             p.setFlying(true);
-
-
             Core.i.getTextUtil().sendTitleMessage("&c&lEliminerad!", 5, 25, 5, p);
         }
 
@@ -293,7 +307,7 @@ public class LMS extends Event {
 
     @Override
     protected void onPlayerDamageEvent(EntityDamageEvent e, Player p) {
-
+      //  if(isState(EventState.RUNNING) || isState(EventState.WAITING) && hasJoined(p)) e.setCancelled(true);
     }
 
 
@@ -302,6 +316,55 @@ public class LMS extends Event {
         if (hasJoined(p)) {
             e.setCancelled(isState(EventState.RUNNING));
         }
+    }
+
+    @Override
+    protected PlaceholderImpl[] getPlaceholders() {
+
+        return new PlaceholderImpl[] {
+                new PlaceholderImpl() {
+                    @Override
+                    public String getPlaceholder() {
+                        return "kills";
+                    }
+
+                    @Override
+                    public String getResult(Player p) {
+                        return String.valueOf(fetchPlayerKills(p));
+                    }
+                },
+                new PlaceholderImpl() {
+                    @Override
+                    public String getPlaceholder() {
+                        return "total";
+                    }
+
+                    @Override
+                    public String getResult(Player p) {
+                        return String.valueOf(getPlayersInEvent());
+                    }
+                },
+                new PlaceholderImpl() {
+                    @Override
+                    public String getPlaceholder() {
+                        return "alive";
+                    }
+
+                    @Override
+                    public String getResult(Player p) {
+                        return String.valueOf(alive);
+                    }
+                }
+        };
+    }
+
+
+    public int fetchPlayerKills(Player p) {
+        return kills.get(p);
+    }
+
+    public int getAlive() {
+        return alive;
     }
 
 

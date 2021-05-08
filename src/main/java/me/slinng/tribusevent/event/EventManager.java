@@ -18,6 +18,8 @@ public class EventManager {
         return events.stream().filter(event -> event.getEventName().equals(name)).findFirst().orElse(null);
     }
 
+
+
     public List<Event> getEvents() {
         return events;
     }
@@ -28,4 +30,7 @@ public class EventManager {
     public void registerEvent(Event event) {
         events.add(event);
     }
+
+
+
 }
